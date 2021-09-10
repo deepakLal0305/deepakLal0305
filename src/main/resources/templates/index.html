@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <title> Employee Data</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <style>
+        .button-container-div {
+            text-align: center;
+        }
+    </style>
+</head>
+<script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+
+<body bgcolor="#f0f0f0">
+
+<h1 align="center">Employee Data</h1>
+<form align="center">
+    <label>First name:</label><br>
+    <input type="text" name="fname" id="fname"><br>
+    <label>Position</label><br>
+    <input type="text" name="position" id="position"><br><br>
+    <input type="hidden" name="id" id="id" value="000"><br>
+    <div id="myDIV1">
+        <input type="button" value="Add" onclick="sendDataWithApi()">
+    </div>
+</form>
+<br>
+<!--<input type="button" name="getData" id="getData" value="GET DATA" onclick="getDataWithApi()"/>-->
+<div id="myDIV" class="button-container-div">
+    <input type="button" name="editDta" id="editData" value="Update DATA" onclick="editDataWithApi()"/>
+</div>
+Name: <input type="text" id="empName">
+Position: <input type="text" id="empPos">
+<input type="button" value="Search" onclick="getDataWithApi(0)">
+<br><br>
+
+<table width="50%" height="50%" border="1" id="tblEmployeeData">
+    <thead>
+    <tr>
+        <th>Edit</th>
+        <th>Id</th>
+        <th>Name</th>
+        <th>Position</th>
+        <th>Delete</th>
+    </tr>
+    </thead>
+    <tbody>
+    </tbody>
+</table>
+<div id="divEmployeePagination"></div>
+
+
+<script language="JavaScript" type="text/javascript">
+
+    $(document).ready(function () {
+        getDataWithApi(0);
+    })
+
+    function getDataWithApi(pageNo) {
+        hideUpdateButton()
+        var modelObj = {
+            employeename: $('#empName').val(),
+            position: $('#empPos').val()
+        };
+        $.ajax({
+            type: "POST",
+            url: "/CRUD/get_employees_search?pageNo=" + pageNo,
+            contentType: 'application/json',
+            headers: {
+                "Content-Type": "application/json",
+                "Accept": "application/json"
+            },
+            data: JSON.stringify(modelObj),
+            success: function (data) {
+                let arrEmployees = data.content;
+                let tBodyHtml = "";
+                for (let i = 0; i < arrEmployees.length; i++) {
+                     let objEmployee = arrEmployees[i];
+                    console.log(objEmployee);
+                    tBodyHtml +=
+                        "<tr>" +
+                        "<td>" +
+                        "<button onclick=\"editData('" + objEmployee.id + "')\">" +
+                        "<i class=\"fa fa-edit\"></i>" +
+                        "</button>" +
+                        "</td>" +
+                        "<td>" + objEmployee.id + "</td><td>" + objEmployee.employeename + "</td>" +
+                        "<td>" + objEmployee.position + "</td>" +
+                        "<td>" +
+                        "<button onclick=\"deleteDataWithApi('" + objEmployee.id + "')\">" +
+                        "<i class=\"fa fa-trash-o\"></i>" +
+                        "</button>" +
+                        "</td>" +
+                        "</tr>";
+                }
+                 if (tBodyHtml == "") {
+                    tBodyHtml = "<tr><td colspan='100%'>No Data Available</td></tr>";
+                }
+                $("#tblEmployeeData tbody").html(tBodyHtml);
+
+                let totalPages = data.totalPages;
+                let pagingHtml = "";
+                for (let i = 0; i < totalPages; i++) {
+                    pagingHtml += "<input type=\"button\" value=\"" + (i + 1) + "\" onClick=\"getDataWithApi(" + (i) + ")\"/>";
+                }
+                 $("#divEmployeePagination").html(pagingHtml);
+            }, error: function (error) {
+                alert(error);
+            }
+        });
+    }
+
+    function sendDataWithApi() {
+        var modelObj = {
+            employeename: $('#fname').val(),
+            position: $('#position').val()
+        };
+        $.ajax({
+            type: "POST",
+            url: "/CRUD/save_employee",
+            contentType: 'application/json',
+            headers: {
+                "Content-Type": "application/json",
+                "Accept": "application/json"
+            },
+            data: JSON.stringify(modelObj),
+            success: function (data) {
+                alert("Saved data");
+                getDataWithApi(0);
+                $('#fname').val(' '),
+                    $('#position').val(' ')
+
+            },
+            error: function (error) {
+                alert(JSON.stringify("Name Exists"))
+                $('#fname').val(' '),
+                    $('#position').val(' ')
+            }
+        });
+        hideUpdateButton()
+    }
+
+    function deleteDataWithApi(id) {
+        $.ajax({
+            type: "DELETE",
+            url: "/CRUD/delete_employee?id=" + id,
+            success: function () {
+                alert("Deleted")
+                getDataWithApi(0);
+                $('#fname').val(' '),
+                    $('#position').val(' ')
+            },
+            error: function (error) {
+                alert(error);
+                $('#fname').val(' '),
+                    $('#position').val(' ')
+            }
+        });
+        hideUpdateButton()
+    }
+
+    function editData(id) {
+
+        $.ajax({
+            type: "GET",
+            url: "/CRUD/get_employee_id?id=" + id,
+            success: function (data) {
+                for (var i = 0; i < data.length; i++) {
+                    $('#fname').val(data[i].employeename),
+                        $('#id').val(data[i].id),
+                        $('#position').val(data[i].position)
+                }
+            }, error: function (error) {
+                alert(error);
+            }
+        });
+        bothButtonHideShow()
+    }
+
+    function editDataWithApi() {
+
+        var modelObj = {
+            employeename: $('#fname').val(),
+            position: $('#position').val(),
+        };
+
+        $.ajax({
+            type: "PUT",
+            url: "/CRUD/update_employee?id=" + $('#id').val(),
+             headers: {
+                "Content-Type": "application/json",
+                "Accept": "application/json"
+            },
+            data: JSON.stringify(modelObj),
+            success: function (data) {
+                alert("Updated");
+                getDataWithApi(0);
+                hideUpdateButton()
+                $('#fname').val(' '),
+                    $('#position').val(' ')
+            },
+            error: function (error) {
+                alert(JSON.stringify(error))
+                bothButtonHideShow()
+            }
+        });
+
+        bothButtonHideShow()
+    }
+
+    function bothButtonHideShow() {
+        var x = document.getElementById("myDIV");
+        if (x.style.display === "none") {
+            x.style.display = "block";
+        } else {
+            x.style.display = "none";
+        }
+        var x1 = document.getElementById("myDIV1");
+        if (x1.style.display === "none") {
+            x1.style.display = "block";
+        } else {
+            x1.style.display = "none";
+        }
+    }
+
+    function hideUpdateButton() {
+        var x = document.getElementById("myDIV");
+        if (x.style.display === "none") {
+            x.style.display = "block";
+        } else {
+            x.style.display = "none";
+        }
+    }
+
+</script>
+</body>
+</html>
