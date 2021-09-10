@@ -25,16 +25,13 @@ public class EmployeeService {
     @Autowired
     private EmployeeRepository employeeRepository;
 
-//    @Autowired
-//    private EmployeeRepositoryPageable employeeRepositoryPageable;
 
     @Autowired
     private EntityManager entityManager;
 
     public ResponseEntity<?> saveEmployee(EmployeeModel employeeModel) {
         boolean isExists = employeeRepository.existsByEmployeenameAndIdIsNot(employeeModel.getEmployeename(), 0);
-//        if (employeeRepository.getEmployeeByName(employeeModel.getEmployeename()).isEmpty()) {
-        if (!isExists) {
+         if (!isExists) {
             employeeRepository.save(employeeModel);
             return new ResponseEntity<>(HttpStatus.OK);
         } else {
@@ -57,8 +54,7 @@ public class EmployeeService {
 
     public ResponseEntity<?> updateEmployee(int id, EmployeeModel employeeModelData) {
         boolean isExists = employeeRepository.existsByEmployeenameAndIdIsNot(employeeModelData.getEmployeename(), id);
-//        if (employeeRepository.getFilterEmployee(employeeModelData.getEmployeename(), id).isEmpty()) {
-        if (!isExists) {
+         if (!isExists) {
             Optional<EmployeeModel> employeeModel = employeeRepository.findById(id);
             employeeModel.get().setEmployeename(employeeModelData.getEmployeename());
             employeeModel.get().setPosition(employeeModelData.getPosition());
@@ -118,14 +114,4 @@ public class EmployeeService {
         return new PageImpl<>(lstEmployees, objPage, totalRecord);
      }
 
-//    public List<EmployeeModel> getAllEmployees(Integer pageNo, Integer pageSize, String sortBy) {
-//        PageRequest paging = PageRequest.of(pageNo, pageSize, Sort.by(sortBy));
-//
-//        Page<EmployeeModel> pagedResult = employeeRepositoryPageable.findAll((org.springframework.data.domain.Pageable) paging);
-//        if (pagedResult.hasContent()) {
-//            return pagedResult.getContent();
-//        } else {
-//            return new ArrayList<EmployeeModel>();
-//        }
-//    }
 }

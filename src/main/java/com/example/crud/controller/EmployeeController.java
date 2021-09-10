@@ -1,20 +1,16 @@
 package com.example.crud.controller;
 
-import com.example.crud.dao.EmployeeDao;
 import com.example.crud.model.EmployeeModel;
 import com.example.crud.repository.EmployeeRepository;
 import com.example.crud.services.EmployeeService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+ import java.util.Optional;
 
 @RestController
 @RequestMapping("/CRUD")
@@ -97,19 +93,5 @@ public class EmployeeController{
         }
     }
 
-//    @RequestMapping(method = RequestMethod.GET,value = "/get_employee_pagination",produces = MediaType.APPLICATION_JSON_VALUE)
-//    public ResponseEntity<?> getAllEmployees(
-//            @RequestParam("pageNo") Integer pageNo,
-//            @RequestParam(defaultValue="2") Integer pageSize,
-//            @RequestParam(defaultValue = "id") String sortBy)
-//    {
-//        try {
-//
-//            List<EmployeeModel> list = employeeService.getAllEmployees(pageNo, pageSize, sortBy);
-//            return new ResponseEntity<List<EmployeeModel>>(list, new HttpHeaders(), HttpStatus.OK);
-//        }
-//        catch (Exception e){
-//            return new ResponseEntity<>(" No pagination: ", HttpStatus.NOT_FOUND);
-//        }
-//    }
+
 }
