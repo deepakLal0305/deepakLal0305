@@ -59,7 +59,7 @@ public class EmployeeController{
             return new ResponseEntity<>("Employee not saved with "+employeeModel.getEmployeename(), HttpStatus.NOT_FOUND);
         }
     }
-
+    
     @RequestMapping(method = RequestMethod.PUT,value = "/update_employee",produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> updateEmployee(@RequestParam("id") int id,@RequestBody EmployeeModel employeeModel){
         try {
