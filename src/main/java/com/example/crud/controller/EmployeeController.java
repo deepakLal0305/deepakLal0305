@@ -27,15 +27,15 @@ public class EmployeeController{
         return "index";
     }
 
-    @RequestMapping(method = RequestMethod.GET,value = "/get_employee",produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> getEmployee(){
-        try {
-             return new ResponseEntity<>(employeeService.getEmployee(), HttpStatus.OK);
-        }
-        catch (Exception e){
-            return new ResponseEntity<>("Employees not found", HttpStatus.NOT_FOUND);
-        }
-    }
+//    @RequestMapping(method = RequestMethod.GET,value = "/get_employee",produces = MediaType.APPLICATION_JSON_VALUE)
+//    public ResponseEntity<?> getEmployee(){
+//        try {
+//             return new ResponseEntity<>(employeeService.getEmployee(), HttpStatus.OK);
+//        }
+//        catch (Exception e){
+//            return new ResponseEntity<>("Employees not found", HttpStatus.NOT_FOUND);
+//        }
+//    }
 
     @RequestMapping(method = RequestMethod.GET,value = "/get_employee_id",produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> getEmployeeById(@RequestParam("id") int id){
